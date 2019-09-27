@@ -22,6 +22,7 @@
 import os
 import sys
 import shutil
+import platform
 print('sys.argv = ', sys.argv)
 
 
@@ -34,16 +35,27 @@ def print_help():
     print('ls - отображение полного пути текущей директории')
     print("ping - тестовый ключ")
 
-def check_system():
-    # TODO Сделать определение оперционной системы
-    pass
 
-def check_par(argument):
+def check_type_system():
+    system = platform.system()
+    if system == 'Linux':
+        print('Вы используете :', system)
+        return system
+    elif system == 'Windows':
+        print('Вы используете :', system)
+        return system
+
+
+def check_arg(argument):
     try:
         key = argument[1]
+        if key == 'ls':
+            if do.get(key):
+                do[key]()
         param = argument[2]
     except IndexError:
         param = None
+        key = None
     if key:
         if do.get(key):
             do[key](param)
@@ -76,11 +88,12 @@ def copy_file(file_name):
         print('Файл {} не существует'.format(file_name))
     if os.path.isfile(file_name):
         new_file = file_name + '.bcp'
+        full_name = os.path.join(os.getcwd(), new_file)
         if os.path.exists(new_file):
             print('Файл {} уже существует'.format(new_file))
         else:
             shutil.copy(file_name, new_file)
-            print("Файл ", new_file, " был успешно создан")
+            print("Файл ", full_name, " был успешно создан")
 
 
 def del_file(del_name):
@@ -109,12 +122,9 @@ def move_to(move_dir):
 
 
 def pwd():
-    # TODO Доделать
-    if not pwd:
-        print('Необходимо указать имя папки вторым параметром')
-        return
-    os.getcwd()
-    print('Путь к папке: ', os.getcwd(pwd))
+    path = os.getcwd()
+    print('Вы находитесь в : ', path)
+
 
 do = {
     "help": print_help,
@@ -126,4 +136,5 @@ do = {
     "ls": pwd,
 }
 
-check_par(sys.argv)
+check_type_system()
+check_arg(sys.argv)
